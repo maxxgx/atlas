@@ -1,0 +1,61 @@
+/* source = http://toedter.com/2011/10/26/java-fx-2-0-css-styling */
+.root {
+	-fx-base: rgb(40, 40, 40);
+	-fx-background: rgb(40, 40, 40);
+	-fx-control-inner-background: rgb(40, 40, 40);
+	-fx-font-smoothing-type: lcd;
+}
+
+.tab {
+	-fx-background-color: linear-gradient(to top, -fx-base, derive(-fx-base, 30%));
+}
+
+.menu-bar, .menu-bar:hover {
+	-fx-background-color: rgb(40, 40, 40);
+}
+
+.text-field {
+	-fx-prompt-text-fill: gray;
+}
+
+.button:hover, .menu:hover, .menu:showing {
+	-fx-background-color: -fx-shadow-highlight-color, -fx-outer-border,
+		-fx-inner-border, -fx-body-color;
+	-fx-color: -fx-hover-base;
+}
+
+.button:focused, .table-view:focused, .choice-box:focused, .menu-bar:focused,
+	.menu:focused, .text-field:focused, .menu-item:focused, .menu-item:focused
+	{
+	-fx-focus-color: transparent;
+	-fx-background-color: derive(-fx-base, +22%);
+	-fx-border-color: derive(-fx-base, +35%);
+	-fx-border-insets: -1;
+}
+
+.table-view {
+	-fx-table-cell-border-color: derive(-fx-base, +10%);
+	-fx-table-header-border-color: derive(-fx-base, +20%);
+}
+
+/* .split-pane:horizontal>*>.split-pane-divider { */
+/* 	-fx-border-color: transparent -fx-base transparent -fx-base; */
+/* 	-fx-background-color: transparent, derive(-fx-base, 20%); */
+/* 	-fx-background-insets: 0, 0 1 0 1; */
+/* } */
+#game-screen {
+	-fx-font: 11pt "roboto";
+}
+
+#menu-hidable {
+	-fx-font: 11pt "Roboto";
+	-fx-focus-color: transparent;
+	-fx-background-color: black;
+}
+
+#cruise {
+	-fx-font: 12pt "Roboto";
+	-fx-border-color: black;
+	-fx-background-color: -fx-base;
+	-fx-padding: 5 2 4 2;
+}
