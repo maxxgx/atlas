@@ -1,2 +1,2 @@
 # Atlas
-A physics solar system simulator in JavaFX!
+Physics solar system simulator in JavaFX!
