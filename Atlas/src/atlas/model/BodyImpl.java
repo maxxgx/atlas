@@ -1,16 +1,15 @@
 package atlas.model;
 
+import atlas.utils.Pair;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Random;
 
-import atlas.utils.Pair;
-
 /**
  * Implementation of Body interface.
- *
  */
 public class BodyImpl implements Body, java.io.Serializable {
 
@@ -28,10 +27,11 @@ public class BodyImpl implements Body, java.io.Serializable {
     private transient Trail trail = new Trail();
     private Properties properties;
     private boolean attracting = true;
+    private boolean trailDisabled = false;
 
     /**
      * Complete Constructor.
-     * 
+     *
      * @param type
      * @param id
      * @param imagePath
@@ -44,7 +44,7 @@ public class BodyImpl implements Body, java.io.Serializable {
      * @param properties
      */
     public BodyImpl(BodyType type, long id, String imagePath, String name, double posx, double posy, double velx,
-            double vely, double mass, Properties properties) {
+                    double vely, double mass, Properties properties) {
         this.type = type;
         this.id = (id != 0 ? id : generateId());
         this.imagePath = imagePath;
@@ -115,6 +115,18 @@ public class BodyImpl implements Body, java.io.Serializable {
     }
 
     @Override
+    public Body add(Body b) {
+        double sumMass = this.mass + b.getMass();
+        double centerMassX = (this.posx * this.mass + b.getPosX() * b.getMass()) / (sumMass);
+        double centerMassY = (this.posy * this.mass + b.getPosY() * b.getMass()) / (sumMass);
+        Body combined = new BodyImpl(this);
+        combined.setMass(sumMass);
+        combined.setPosX(centerMassX);
+        combined.setPosY(centerMassY);
+        return combined;
+    }
+
+    @Override
     public void addForce(Body b) {
         double EPS = 1; // softening parameter (just to avoid infinities)
         double dx = b.getPosX() - this.posx;
@@ -140,7 +152,7 @@ public class BodyImpl implements Body, java.io.Serializable {
         // updates the rotation angle
         this.properties.updateRotation(dt);
         this.checkTrail();
-        this.trail.addPoint(this.posx, this.posy);
+        if (!trailDisabled) this.trail.addPoint(this.posx, this.posy);
         // updates orbital period with the 3rd keplar law
         if (this.properties.getParent().isPresent()) {
             Body parent = this.properties.getParent().get();
@@ -226,6 +238,7 @@ public class BodyImpl implements Body, java.io.Serializable {
      * Creates a new trail if there isn't one already.
      */
     private void checkTrail() {
+        if (trailDisabled) return;
         if (this.trail == null) {
             this.trail = new Trail();
         }
@@ -252,6 +265,17 @@ public class BodyImpl implements Body, java.io.Serializable {
     }
 
     @Override
+    public boolean in(Quad q) {
+        return q.contains(this.getPosX(), this.getPosY());
+    }
+
+    @Override
+    public void toggleTrail() {
+        this.trailDisabled = !this.trailDisabled;
+        this.trail = new Trail();
+    }
+
+    @Override
     public String toString() {
         NumberFormat formatter = new DecimalFormat("0.### ### ### ### ###E0");
         double AU = 149597870.700 * 1000;
@@ -268,7 +292,6 @@ public class BodyImpl implements Body, java.io.Serializable {
 
     /**
      * This inner class is used to implement the Builder design pattern.
-     *
      */
     public static class Builder {
         private BodyType type;
@@ -333,7 +356,7 @@ public class BodyImpl implements Body, java.io.Serializable {
         /**
          * Construct the body. If type or mass is not initialized, it throws an
          * IllegalStateException.
-         * 
+         *
          * @return the constructed body
          */
         public BodyImpl build() {
