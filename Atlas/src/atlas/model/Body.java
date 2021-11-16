@@ -1,79 +1,78 @@
 package atlas.model;
 
+import atlas.utils.Pair;
+
 import java.util.Collection;
 import java.util.Optional;
 
-import atlas.utils.Pair;
-
 /**
  * A generic celestial body interface.
- *
  */
 public interface Body {
 
     public static final String IMAGE_FOLDER = "/bodies_images/";
 
     /**
-     * 
      * @return the body's type
      */
     public BodyType getType();
 
     /**
      * Changes body type.
-     * 
-     * @param type
-     *            the new type
+     *
+     * @param type the new type
      */
     public void setType(BodyType type);
 
     /**
      * Gets the unique id of the body, it cannot be changed.
-     * 
+     *
      * @return the unique id of the body
      */
     public long getId();
 
     /**
      * Gets the body's image path, it's always available
-     * 
+     *
      * @return the path to the body's image
      */
     public String getImagePath();
 
     /**
-     * 
      * @return the body's name
      */
     public String getName();
 
     /**
      * Assigns the given name to the body.
-     * 
-     * @param name
-     *            the new name
+     *
+     * @param name the new name
      */
     public void setName(String name);
 
     /**
-     * 
      * @return the body's mass in kilograms
      */
     public double getMass();
 
     /**
      * Sets the body's mass.
-     * 
-     * @param mass
-     *            the new mass
+     *
+     * @param mass the new mass
      */
     public void setMass(double mass);
 
     /**
+     * Returns the combined body with b, center of mass between this and b.
+     *
+     * @param b body to combine
+     */
+    public Body add(Body b);
+
+    /**
      * Adds the force relative to an another body using Newton's law of gravity.
-     * 
-     * @param b
-     *            the body taken into consideration
+     *
+     * @param b the body taken into consideration
      */
     public void addForce(Body b);
 
@@ -84,62 +83,58 @@ public interface Body {
 
     /**
      * Updates the position of the body in the simulation.
-     * 
-     * @param dt
-     *            time-stamp, determines both accuracy and speed, smaller dt
-     *            gives more accuracy but slower speed.
+     *
+     * @param dt time-stamp, determines both accuracy and speed, smaller dt
+     *           gives more accuracy but slower speed.
      */
     public void updatePos(double dt);
 
     /**
      * Calculates the distance from an another body.
-     * 
-     * @param b
-     *            the target body
+     *
+     * @param b the target body
      * @return the distance between this body and a body b
      */
     public double distanceTo(Body b);
 
     /**
      * Returns the x coordinates from the origin.
-     * 
+     *
      * @return the x coordinates in meters
      */
     public double getPosX();
 
     /**
      * Sets the horizontal position.
-     * 
-     * @param x
-     *            the x coordinate to set
+     *
+     * @param x the x coordinate to set
      */
     public void setPosX(double x);
 
     /**
      * Returns the y coordinates from the origin.
-     * 
+     *
      * @return the y coordinates in meters
      */
     public double getPosY();
 
     /**
      * Sets the vertical position.
-     * 
-     * @param y
-     *            the y coordinate to set
+     *
+     * @param y the y coordinate to set
      */
     public void setPosY(double y);
 
     /**
      * Returns the velocity in the x-axis
-     * 
+     *
      * @return the horizontal velocity x
      */
     public double getVelX();
 
     /**
      * Returns the velocity in the y-axis
-     * 
+     *
      * @return the vertical velocity y
      */
     public double getVelY();
@@ -147,29 +142,26 @@ public interface Body {
     /**
      * Sets the velocity with a pair, this methods also changes the direction of
      * the body.
-     * 
-     * @param velocity
-     *            a pair that represents the velocity, X and Y.
+     *
+     * @param velocity a pair that represents the velocity, X and Y.
      */
     public void setVelocity(Pair<Double, Double> velocity);
 
     /**
      * Gets the total velocity of the body, regardless of the direction.
-     * 
+     *
      * @return total velocity of the body
      */
     public double getTotalVelocity();
 
     /**
      * Sets the total velocity of the body, maintaining the same direction.
-     * 
-     * @param vt
-     *            total velocity
+     *
+     * @param vt total velocity
      */
     public void setTotalVelocity(double vt);
 
     /**
-     * 
      * @return the body's properties.
      */
     public Properties getProperties();
@@ -177,14 +169,14 @@ public interface Body {
     /**
      * This method returns the current trail produced by the movement of the
      * body.
-     * 
+     *
      * @return the collection of the trail points
      */
     public Collection<Pair<Double, Double>> getTrail();
 
     /**
      * Checks if the body attracts other bodies.
-     * 
+     *
      * @return whether this body attracts others
      */
     public boolean isAttracting();
@@ -197,15 +189,25 @@ public interface Body {
     /**
      * Updates the current body with another body's information, it does not
      * make a copy of said body, so it maintains the id.
-     * 
-     * @param b
-     *            the body to get the info from
+     *
+     * @param b the body to get the info from
      */
     public void updateInfo(Body b);
 
     /**
-     * Nested class used to store a celestial body's secondary properties.
+     * Checks if the body is in a certain quadrant.
      *
+     * @param q quadrant
+     */
+    public boolean in(Quad q);
+
+    /**
+     * Unable/disable adding of trail points.
+     */
+    public void toggleTrail();
+
+    /**
+     * Nested class used to store a celestial body's secondary properties.
      */
     public static class Properties implements java.io.Serializable {
 
@@ -222,9 +224,8 @@ public interface Body {
 
         /**
          * Converts celsius to kelvin.
-         * 
-         * @param c
-         *            temperature in celsius
+         *
+         * @param c temperature in celsius
          * @return temperature in kelvin
          */
         public static double celsiusToKelvin(double c) {
@@ -233,9 +234,8 @@ public interface Body {
 
         /**
          * Converts kelvin to celsius.
-         * 
-         * @param c
-         *            temperature in kelvin
+         *
+         * @param c temperature in kelvin
          * @return temperature in celsius
          */
         public static double KelvinToCelsius(double c) {
@@ -244,41 +244,30 @@ public interface Body {
 
         /**
          * The complete constructor.
-         * 
-         * @param radius
-         *            radius of the body in meters
-         * @param rotationPeriod
-         *            the time it takes for the body make to rotate 360 deg on
-         *            its axis.
-         * @param rotationAngle
-         *            the current angle of the rotation
-         * @param orbitalPeriod
-         *            the time it takes to orbit around its parent
-         * @param parent
-         *            the parent (body) of this body
-         * @param temperature
-         *            temperature of the body in kelvin
+         *
+         * @param radius         radius of the body in meters
+         * @param rotationPeriod the time it takes for the body make to rotate 360 deg on
+         *                       its axis.
+         * @param rotationAngle  the current angle of the rotation
+         * @param orbitalPeriod  the time it takes to orbit around its parent
+         * @param parent         the parent (body) of this body
+         * @param temperature    temperature of the body in kelvin
          */
         public Properties(double radius, long rotationPeriod, double rotationAngle, Long orbitalPeriod, Body parent,
-                Double temperature) {
+                          Double temperature) {
             this(radius, rotationPeriod, orbitalPeriod, parent, temperature);
             this.rotationAngle = rotationAngle;
         }
 
         /**
          * Additional constructor.
-         * 
-         * @param radius
-         *            radius of the body in meters
-         * @param rotationPeriod
-         *            the time it takes for the body make to rotate 360 deg on
-         *            its axis.
-         * @param orbitalPeriod
-         *            the time it takes to orbit around its parent
-         * @param parent
-         *            the parent (body) of this body
-         * @param temperature
-         *            temperature of the body in kelvin
+         *
+         * @param radius         radius of the body in meters
+         * @param rotationPeriod the time it takes for the body make to rotate 360 deg on
+         *                       its axis.
+         * @param orbitalPeriod  the time it takes to orbit around its parent
+         * @param parent         the parent (body) of this body
+         * @param temperature    temperature of the body in kelvin
          */
         public Properties(double radius, long rotationPeriod, Long orbitalPeriod, Body parent, Double temperature) {
             this(radius, rotationPeriod);
@@ -289,12 +278,10 @@ public interface Body {
 
         /**
          * Minimal constructor.
-         * 
-         * @param radius
-         *            radius of the body in meters
-         * @param rotationPeriod
-         *            the time it takes for the body make to rotate 360 deg on
-         *            its axis.
+         *
+         * @param radius         radius of the body in meters
+         * @param rotationPeriod the time it takes for the body make to rotate 360 deg on
+         *                       its axis.
          */
         public Properties(double radius, long rotationPeriod) {
             this.radius = radius;
@@ -319,7 +306,7 @@ public interface Body {
 
         /**
          * Returns the current angle by which the body is rotated.
-         * 
+         *
          * @return the current angle in degrees
          */
         public double getRotationAngle() {
@@ -334,9 +321,8 @@ public interface Body {
          * Updates the rotation of the body, which is calculated using a
          * time-stamp (dt) and the time it takes to complete a 360 degrees
          * rotation.
-         * 
-         * @param dt
-         *            time-stamp, in seconds
+         *
+         * @param dt time-stamp, in seconds
          */
         public void updateRotation(double dt) {
             if (this.rotationPeriod != 0) {
